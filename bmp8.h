@@ -104,3 +104,5 @@ void bmp8_saveImage(const char * filename, t_bmp8 * img) {
     // Close the file
     fclose(file);
 }
+
+t_bmp8 *bmp8_loadImage(lena_gray);
