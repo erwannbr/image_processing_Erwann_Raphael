@@ -82,7 +82,7 @@ void bmp8_saveImage(const char * filename, t_bmp8 * img) {
         return;
     }
 
-    //color table
+    //BMP color table
     size_t ColorTable = fwrite(img->colorTable, sizeof(unsigned char), 1024, file);
     if (ColorTable != 1024) {
 
@@ -91,7 +91,7 @@ void bmp8_saveImage(const char * filename, t_bmp8 * img) {
         return;
     }
 
-    // Write the pixel data
+    //BMP pixel data
     size_t dataWritten = fwrite(img->data, sizeof(unsigned char), img->dataSize, file);
     if (dataWritten != img->dataSize) {
 
