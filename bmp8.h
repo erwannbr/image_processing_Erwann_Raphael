@@ -12,55 +12,57 @@ unsigned int colorDepth;
 unsigned int dataSize;
 } t_bmp8;
 
-
-
-t_bmp8 * bmp8_loadImage(const char * filename);
 void bmp8_saveImage(const char * filename, t_bmp8 * img);
 void bmp8_free(t_bmp8 * img);
 void bmp8_printInfo(t_bmp8 * img);
 
+t_bmp8 *bmp8_loadImage(const char *filename) {
+    FILE *image = fopen(filename, "rb");
 
-//For loading the image
-t_bmp8 * bmp8_loadImage(const char * filename){
-    FILE * image = fopen(filename, "rb");
-
-    //Error when the file is not existing
+    // Error when the file is not existing
     if (image == NULL) {
-        printf("Error while openning the file, the file is not existing ! ");
+        printf("Error while opening the file, the file does not exist!\n");
         return NULL;
     }
 
     // Extract image properties from the BMP header
     unsigned char header[54];
-    fread(header, 1, 54, image);
+    fread(header, sizeof(unsigned char), 54, image);
 
-    int width = *(int*)&header[18];
-    int height = *(int*)&header[22];
-    int colorDepth = *(short*)&header[28];
-    int dataSize= *(int*)&header[34];
+    // Extract image properties from the header
+    unsigned int width = *(unsigned int*)&header[18];
+    unsigned int height = *(unsigned int*)&header[22];
+    unsigned short colorDepth = *(unsigned short*)&header[28];
+    unsigned int dataSize = *(unsigned int*)&header[34];
 
-    //Error when the file is not 8 bits deep
-    if (dataSize < 8) {
-        printf("Error while opening the file, the file is not 8 bits deep");
+    // Error when the file is not 8 bits deep
+    if (colorDepth != 8) {
+        printf("Error while opening the file, the file is not 8 bits deep!\n");
+        fclose(image);
         return NULL;
     }
 
-    //Extract and place into the fields
-    t_bmp8 * bmpImage = (t_bmp8 *)malloc(sizeof(t_bmp8));
-    fread(bmpImage->header, sizeof(unsigned char), 54, image);
+    // Allocate memory for the BMP image structure
+    t_bmp8 *bmpImage = (t_bmp8 *)malloc(sizeof(t_bmp8));
+
+    // Initialize the image properties
+    bmpImage->width = width;
+    bmpImage->height = height;
+    bmpImage->colorDepth = colorDepth;
     bmpImage->dataSize = dataSize;
-    bmpImage->width = *(unsigned int*)&bmpImage->header[18];
-    bmpImage->height = *(unsigned int*)&bmpImage->header[22];
-    bmpImage->colorDepth = *(unsigned short*)&bmpImage->header[28];
 
+    // Allocate memory for pixel data
+    bmpImage->data = (unsigned char *)malloc(dataSize);
 
+    // Move to the pixel data location in the file and read the data
+    fseek(image, *(unsigned int*)&header[10], SEEK_SET);
+    fread(bmpImage->data, sizeof(unsigned char), dataSize, image);
 
     fclose(image);
-    printf("GOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOODDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
+    printf("Image loaded successfully!\n");
     return bmpImage;
-
-
 }
+
 
 
 void bmp8_saveImage(const char * filename, t_bmp8 * img) {
