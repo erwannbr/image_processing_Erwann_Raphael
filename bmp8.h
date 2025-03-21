@@ -70,24 +70,23 @@ void bmp8_saveImage(const char * filename, t_bmp8 * img) {
     FILE *file = fopen(filename, "wb");
     if (!file) {
         // If file cannot be opened, print an error message and return
-        perror("Error opening file");
+        perror("Error during the opening of the file");
         return;
     }
 
-    // Write the BMP header (54 bytes)
-    size_t headerWritten = fwrite(img->header, sizeof(unsigned char), 54, file);
-    if (headerWritten != 54) {
-        // Error in writing header
-        perror("Error writing header");
+    //BMP header
+    size_t header = fwrite(img->header, sizeof(unsigned char), 54, file);
+    if (header != 54) {
+        perror("Error occured while writing the header");
         fclose(file);
         return;
     }
 
-    // Write the color table (1024 bytes for 256 grayscale colors)
-    size_t colorTableWritten = fwrite(img->colorTable, sizeof(unsigned char), 1024, file);
-    if (colorTableWritten != 1024) {
-        // Error in writing color table
-        perror("Error writing color table");
+    //color table
+    size_t ColorTable = fwrite(img->colorTable, sizeof(unsigned char), 1024, file);
+    if (ColorTable != 1024) {
+
+        perror("Error during the writing of color table");
         fclose(file);
         return;
     }
@@ -95,8 +94,8 @@ void bmp8_saveImage(const char * filename, t_bmp8 * img) {
     // Write the pixel data
     size_t dataWritten = fwrite(img->data, sizeof(unsigned char), img->dataSize, file);
     if (dataWritten != img->dataSize) {
-        // Error in writing data
-        perror("Error writing pixel data");
+
+        perror("Error during the writing of pixel data");
         fclose(file);
         return;
     }
