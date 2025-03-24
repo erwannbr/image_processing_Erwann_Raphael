@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
 typedef struct {
 unsigned char header[54];
 unsigned char colorTable[1024];
