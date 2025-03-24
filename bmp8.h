@@ -103,4 +103,15 @@ void bmp8_saveImage(const char * filename, t_bmp8 * img) {
     fclose(file);
 }
 
-t_bmp8 *bmp8_loadImage(lena_gray);
+int main() {
+    const char *lena_gray = "lena_gray.bmp";
+    t_bmp8 *image = bmp8_loadImage(lena_gray);
+
+    if (image) {
+        printf("Image width: %u, height: %u, depth: %u\n", image->width, image->height, image->colorDepth);
+        free(image->data);
+        free(image);
+    }
+
+    return 0;
+}
