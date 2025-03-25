@@ -195,22 +195,21 @@ int main() {
                     printf(">>>>> Your choice: ");
                     scanf("%d", &filterChoice);
 
-                    //For the negative filter
-                    if (filterChoice == 1) {
-                        bmp8_negative(image);
-                        printf("Negative filter applied.\n");
 
-                    //For the brightness filter
-                    } else if (filterChoice == 2) {
-                        printf("Whats the value of the bright you wanna change ? ");
+                    switch (filterChoice) {
+                        case 1: //For the negative filter
+                            bmp8_negative(image);
+                        printf("Negative filter applied.\n");
+                        break;
+                        case 2: //For the brightness filter
+                            printf("Whats the value of the bright you wanna change ? ");
                         scanf("%d", &bright);
 
                         bmp8_brightness(image,bright);
                         printf("Brightness filter applied.\n");
-
-                    //For the treshold
-                    } else if (filterChoice == 3) {
-                        printf("Which color of pixel you wanna bright ? (0-255) :");
+                        break;
+                        case 3: //For the treshold
+                            printf("Which color of pixel you wanna bright ? (0-255) :");
                         scanf("%d", &thresh);
 
                         bmp8_threshold(image, thresh);
