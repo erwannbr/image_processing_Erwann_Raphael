@@ -11,7 +11,6 @@ unsigned int colorDepth;
 unsigned int dataSize;
 } t_bmp8;
 
-void bmp8_saveImage(const char * filename, t_bmp8 * img);
 void bmp8_free(t_bmp8 * img);
 void bmp8_printInfo(t_bmp8 * img);
 
@@ -61,8 +60,6 @@ t_bmp8 *bmp8_loadImage(const char *filename) {
     printf("Image loaded successfully!\n");
     return bmpImage;
 }
-
-
 
 void bmp8_saveImage(const char * filename, t_bmp8 * img) {
     // Open the file for writing in binary mode
