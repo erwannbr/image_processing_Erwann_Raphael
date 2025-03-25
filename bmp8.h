@@ -122,53 +122,125 @@ void bmp8_negative(t_bmp8 * img){
     }
 }
 
+//brghtness function
 void bmp8_brightness(t_bmp8 * img, int value){
+    for (int i = 0; i < img->height; i++) {
+        for (int j = 0; j < img->width; j++) {
+            int index = i * img->width + j;
 
+            if ((img->data[index] + value) > 255) {
+                img->data[index] = 255;
+            } else if ((img->data[index] + value) < 0) {
+                img->data[index] = 0;
+            } else {
+                img->data[index] = img->data[index] + value;
+            }
+        }
+    }
 }
-void bmp8_threshold(t_bmp8 * img, int threshold);
+
+//threshold function
+void bmp8_threshold(t_bmp8 *img, int threshold) {
+    for (int i = 0; i < img->height; i++) {
+        for (int j = 0; j < img->width; j++) {
+            int index = i * img->width + j;
+
+            if (img->data[index] >= threshold) {
+                img->data[index] = 255;
+            } else {
+                img->data[index] = 0;
+            }
+        }
+    }
+}
 
 //little main to chekc if its work
 int main() {
-    int i;
-    char filename[256];
+    int choice, filterChoice, run = 1, bright, thresh;
+    char filename[256], saveFilename[256];
     t_bmp8 *image = NULL;
 
-    //Start of the menu
-    printf("Please choose an option:\n    1. Open an image\n    2. Save an image\n    3. Apply a filter\n    4. Display image information\n    5. Quit\n");
-    printf(">>>>>Your choice: ");
-    scanf("%d", &i);
+    //Biggest loop to run the programme
+    while (run) {
+        printf("\nPlease choose an option:\n    1. Open an image\n    2. Save an image\n    3. Apply a filter\n    4. Display image information\n    5. Quit\n");
+        printf("\n>>>>> Your choice: ");
+        scanf("%d", &choice);
 
-    //First choice for the loading of the image
-    if (i == 1) {
-        printf("File path: ");
-        scanf("%255s", filename);
+        //switch case because it is logical (more than while)
+        switch (choice) {
+            case 1:
+                //To open a file
+                printf("Enter file path: ");
+                scanf("%255s", filename);
+                image = bmp8_loadImage(filename);
+                break;
 
-        image = bmp8_loadImage(filename);
-        bmp8_free(image);
+            case 2:
+                //To save an image
+                if (!image) {
+                    printf("No image loaded, can't save the image.\n");
+                } else {
+                    printf("Enter save file path: ");
+                    scanf("%255s", saveFilename);
+                    bmp8_saveImage(saveFilename, image);
+                }
+                break;
 
-    } else if (i == 2){
-        if (!image){
-            printf("No image, can't save the image");
-        } else {
-            bmp8_saveImage(filename, image);
+            case 3:
+                //To save a filter
+                if (!image) {
+                    printf("No image loaded, can't apply a filter.\n");
+                } else {
+                    printf("Choose a filter:\n    1. Negative\n    2. Brightness\n    3. Black and white\n    4. Box blur\n    5. Gaussian blur\n    6. Outline\n    7. Emboss\n    8. Return to previous menu\n");
+                    printf(">>>>> Your choice: ");
+                    scanf("%d", &filterChoice);
+
+                    //For the negative filter
+                    if (filterChoice == 1) {
+                        bmp8_negative(image);
+                        printf("Negative filter applied.\n");
+
+                    //For the brightness filter
+                    } else if (filterChoice == 2) {
+                        printf("Whats the value of the bright you wanna change ? ");
+                        scanf("%d", &bright);
+
+                        bmp8_brightness(image,bright);
+                        printf("Brightness filter applied.\n");
+
+                    //For the treshold
+                    } else if (filterChoice == 3) {
+                        printf("Which color of pixel you wanna bright ? (0-255) :");
+                        scanf("%d", &thresh);
+
+                        bmp8_threshold(image, thresh);
+                        printf("Brightness filter applied.\n");
+                    }
+                }
+                break;
+
+            case 4:
+                //Display all the information
+                if (!image) {
+                    printf("No image loaded, can't display info.\n");
+                } else {
+                    bmp8_printInfo(image);
+                }
+                break;
+
+            case 5:
+                //To exit the programme
+                run = 0;
+                if (image) {
+                    bmp8_free(image);
+                }
+                printf("Exiting program.\n");
+                break;
+
+            default:
+                printf("Invalid choice. Please enter a number between 1 and 5.\n");
         }
-    } else if (i == 3){
-        if (!image){
-            printf("No image, can't apply a filter\n");
-        } else {
-        printf("Please choose an filter:\n    1. Negative\n    2. Brightness\n    3. Black and white\n    4. Box blur\n    5. Gaussian blur\n    6.Outline\n     7.Emboss\n     8.Return to previous menu\n");
-        }
-    } else  if (i == 4){
-        if (!image){
-            printf("No image, can't display info of the image");
-        } else {
-            bmp8_printInfo(image);
-        }
-    } else if (i == 5){
-        return 0;
     }
-
     return 0;
 }
-
 
