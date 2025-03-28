@@ -41,6 +41,12 @@ t_bmp8 *bmp8_loadImage(const char *filename) {
     //allocate memory for the BMP image 
     t_bmp8 *bmpImage = (t_bmp8 *)malloc(sizeof(t_bmp8));
 
+
+    // Copy header and color table
+    memcpy(bmpImage->header, header, 54);
+    fread(bmpImage->colorTable, sizeof(unsigned char), 1024, image);
+    
+
     //initialize the image proprietes
     bmpImage->width = width;
     bmpImage->height = height;
@@ -242,4 +248,3 @@ int main() {
     }
     return 0;
 }
-
